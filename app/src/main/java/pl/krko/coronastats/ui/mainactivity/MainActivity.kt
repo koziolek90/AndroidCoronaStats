@@ -58,7 +58,11 @@ class MainActivity : AppCompatActivity() {
             .setTitle("Dodatkowe dane")
             .setMessage("Dzisiejsz zgony: ${corona.todayDeaths}\n" +
                     "Aktywne zarażenia: ${corona.active}\n" +
-                    "W stanie ciężkim: ${corona.critical}")
+                    "W stanie ciężkim: ${corona.critical}\n" +
+                    "Zgony/milion: ${corona.deathsPerOneMillion}\n" +
+                    "Testy: ${corona.tests}\n" +
+                    "Testy/milion: ${corona.testsPerOneMillion}"
+            )
             .setCancelable(true)
             .show()
     }
