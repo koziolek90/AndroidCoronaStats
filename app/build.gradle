@@ -43,6 +43,7 @@ dependencies {
     def rxandroid_version = "2.1.1"
     def rxjava_version = "2.2.10"
     def recycler_version = '1.1.0'
+    def charts_version = '3.1.0'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -78,5 +79,8 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:$recycler_version"
 
     implementation 'androidx.cardview:cardview:1.0.0'
+
+    //MpAndroid chart
+    implementation "com.github.PhilJay:MPAndroidChart:v$charts_version"
 
 }

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import pl.krko.coronastats.R
 import pl.krko.coronastats.databinding.ActivityMainBinding
-import pl.krko.coronastats.model.Corona
+import pl.krko.coronastats.model.objects.Corona
 
 
 class MainActivity : AppCompatActivity() {

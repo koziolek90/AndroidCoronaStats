@@ -1,6 +1,7 @@
 package pl.krko.coronastats.ui.mainactivity
 
 interface MainActivityActions {
-    fun getAllData()
+    fun getSummaryData()
+    fun getCountriesData()
 
 }

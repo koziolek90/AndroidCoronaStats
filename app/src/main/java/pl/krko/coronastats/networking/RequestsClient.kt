@@ -4,19 +4,19 @@ import android.annotation.SuppressLint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
-import pl.krko.coronastats.model.Corona
-import pl.krko.coronastats.model.SortParam
+import pl.krko.coronastats.model.objects.Corona
+import pl.krko.coronastats.model.enums.SortParam
 
 internal object RequestsClient {
     private val requestsApi: RequestsApi = NetworkClient.requestsApi
 
 
     @SuppressLint("CheckResult")
-    fun getAll(
-        successConsumer: Consumer<List<Corona>>,
+    fun getWorldStats(
+        successConsumer: Consumer<Corona>,
         errorConsumer: Consumer<Throwable>
     ) {
-        requestsApi.getAll()
+        requestsApi.getWorldStats()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(successConsumer, errorConsumer)
@@ -34,12 +34,12 @@ internal object RequestsClient {
     }
 
     @SuppressLint("CheckResult")
-    fun getSortedBy(
+    fun getCountriesSortedBy(
         sortedParam: SortParam,
         successConsumer: Consumer<List<Corona>>,
         errorConsumer: Consumer<Throwable>
     ) {
-        requestsApi.getSortedBy(sortedParam.paramString)
+        requestsApi.getCountriesSortedBy(sortedParam.paramString)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(successConsumer, errorConsumer)

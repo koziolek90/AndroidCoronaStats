@@ -3,8 +3,9 @@ package pl.krko.coronastats.ui.mainactivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.functions.Consumer
-import pl.krko.coronastats.model.Corona
-import pl.krko.coronastats.model.SortParam
+import pl.krko.coronastats.model.DataProcess
+import pl.krko.coronastats.model.objects.Corona
+import pl.krko.coronastats.model.enums.SortParam
 import pl.krko.coronastats.networking.RequestsClient
 import pl.krko.coronastats.ui.mainactivity.list.CoronaAdapter
 
@@ -16,41 +17,63 @@ class MainActivityViewModel : ViewModel(), MainActivityActions {
     val openCoronaDetails = MutableLiveData<Corona>()
     val showToastAction = MutableLiveData<String>()
 
-    var adapter: CoronaAdapter = CoronaAdapter(ArrayList(), this::onAdapterItemCLick)
+    var adapter: CoronaAdapter = CoronaAdapter(mutableListOf(), this::onAdapterItemLongClick, this::onAdapterItemClick)
 
     init {
-        getAllData()
+        adapter.data.clear()
+        refreshingVisibility.postValue(true)
+
+        getSummaryData()
     }
 
-    override fun getAllData() {
-        RequestsClient.getSortedBy(SortParam.CASES,
+    //Get world statistics
+    override fun getSummaryData() {
+        RequestsClient.getWorldStats(
             Consumer { response ->
-                response?.let { list ->
-                    val mutableList = mutableListOf<Corona>()
-                    mutableList.addAll(list)
-
-                    val poland = mutableList.find { it.country == "Poland" }
-
-                    poland?.let {
-                        val polPos = mutableList.indexOf(poland)
-
-                        mutableList.removeAt(polPos)
-                        mutableList.add(0, poland)
-                    }
-
-                    adapter = CoronaAdapter(mutableList, this::onAdapterItemCLick)
-                    allCoronaObjects.postValue(mutableList)
-                    refreshingVisibility.postValue(false)
+                response?.let {
+                    response.country = "World"
+                    adapter.data.add(response)
+                    adapter.notifyDataSetChanged()
+                    getCountriesData()
                 }
             },
-            Consumer { error ->
-                error.printStackTrace()
-                showToastAction.postValue("Data downloading error")
+            Consumer {
+                getCountriesData()
+                handleDownloadError(it)
             }
         )
     }
 
-    private fun onAdapterItemCLick(corona: Corona) {
+    //Get all countries data
+    override fun getCountriesData() {
+        RequestsClient.getCountriesSortedBy(
+            SortParam.CASES,
+            Consumer { response ->
+                response?.let { list ->
+                    val dataList = DataProcess.moveCountryToFirstPosition("Poland", list)
+
+                    adapter.data.addAll(dataList)
+                    adapter.notifyDataSetChanged()
+
+                    allCoronaObjects.postValue(dataList)
+                    refreshingVisibility.postValue(false)
+                }
+            },
+            Consumer { handleDownloadError(it) }
+        )
+    }
+
+
+    private fun handleDownloadError(error: Throwable) {
+        error.printStackTrace()
+        showToastAction.postValue("Data downloading error")
+    }
+
+    private fun onAdapterItemClick(corona: Corona) {
+        openCoronaDetails.postValue(corona)
+    }
+
+    private fun onAdapterItemLongClick(corona: Corona) {
         openCoronaDetails.postValue(corona)
     }
 

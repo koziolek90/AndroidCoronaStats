@@ -6,7 +6,7 @@
     <data>
         <variable
             name="corona"
-            type="pl.krko.coronastats.model.Corona" />
+            type="pl.krko.coronastats.model.objects.Corona" />
     </data>
 
         <androidx.cardview.widget.CardView
